@@ -1,3 +1,7 @@
+config {
+    type: "assertion",
+    name: "cnsd_anmz_msp_nam_candidate"
+}
 execute immediate
   replace( format(""" 
   create or replace table `db_anmz_[region]_candidate_stdschema.cnsd_anmz_msp_[region]_candidate` as 
@@ -104,4 +108,4 @@ on lower(cnsd.req_title) = lower(tc.req_title) and cnsd.rsr_client_code = tc.rsr
 left outer join db_aptus.config_supplier_type_logic supp_type on lower(cnsd.buyer_code) =lower(TO_HEX(SHA256(supp_type.buyer_code))) and lower(cnsd.supplier_code) = lower(supp_type.supplier_code)
 left outer join db_gbl_people_analytics_and_performance.misc_slsfrc_gbl_paap_derv_gcp_client_code_dedup prgdtls_trdr on cnsd.rsr_client_code = prgdtls_trdr.talentradar_gcp_client_code_new
 )
-  """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `db_anmz_nam_candidate_stdschema.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%')),'[region]', 'nam');
+  """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `db_anmz_nam_candidate_stdschema.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%')),'[region]', 'nam')
