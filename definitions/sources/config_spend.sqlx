@@ -1,0 +1,5 @@
+config {
+    type: "declaration",
+    schema: "db_anmz_nam_spend_stdschema",
+    name: "cnsd_anmz_msp_nam_spend",
+}
