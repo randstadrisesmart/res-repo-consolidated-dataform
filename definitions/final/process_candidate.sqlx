@@ -1,5 +1,5 @@
 config {
-    type: "assertion",
+    type: "operations",
     name: "cnsd_anmz_msp_nam_candidate"
 }
 execute immediate
