@@ -1,5 +1,5 @@
 config {
     type: "declaration",
-    schema: "db_anmz_nam_requisition_distribution_stdschema",
+    schema: "dataform_cnsd",
     name: "cnsd_anmz_msp_nam_requisition_distribution",
 }
