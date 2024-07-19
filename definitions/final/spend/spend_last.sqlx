@@ -1,13 +1,12 @@
 config {
     type: "table",
-    dependencies: ["spend_intermediate_joins"],
+    dependencies: ["spend_intermediate1"],
     schema: "db_anmz_nam_spend_stdschema",
     name: "cnsd_anmz_msp_nam_spend"
 }
 
 SELECT DISTINCT
   intermediate.*,
-  intermediate.industry,
   CASE 
     WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END) IS NULL THEN intermediate.norm_state_location_level_2
     ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END)
@@ -85,5 +84,5 @@ SELECT DISTINCT
   intermediate.region,
   intermediate.vms_provider
 FROM
-  ${ref("spend_intermediate_joins")} AS intermediate
+  ${ref("spend_intermediate1")} AS intermediate
 

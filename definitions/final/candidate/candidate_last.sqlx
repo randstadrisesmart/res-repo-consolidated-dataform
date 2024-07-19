@@ -1,13 +1,68 @@
 config {
     type: "table",
-    dependencies: ["candidate_intermediate_joins"],
+    dependencies: ["candidate_intermediate1"],
     schema: "db_anmz_nam_candidate_stdschema",
     name: "cnsd_anmz_msp_nam_candidate"
 }
 
 SELECT DISTINCT
-  intermediate.*,
-  intermediate.industry,
+  intermediate.approved_to_submit_bd,
+  intermediate.approved_to_submit_cd,
+  intermediate.assignment_activation_date,
+  intermediate.assignment_activation_date_initial,
+  intermediate.assignment_create_date_initial,
+  intermediate.business_unit,
+  intermediate.business_unit_code,
+  intermediate.buyer,
+  intermediate.buyer_code,
+  intermediate.cand_available_date,
+  intermediate.cand_buyer_first_viewed_date,
+  intermediate.cand_code,
+  intermediate.cand_first_interviewed_date,
+  intermediate.cand_first_submitted_date,
+  intermediate.cand_id,
+  intermediate.cand_last_interviewed_date,
+  intermediate.cand_last_modified_date,
+  intermediate.cand_name,
+  intermediate.cand_offer_accepted_date,
+  intermediate.cand_offer_extended_date,
+  intermediate.cand_rejected_date,
+  intermediate.cand_shortlisted_date,
+  intermediate.cand_status,
+  intermediate.cand_submit_date,
+  intermediate.cand_unshortlisted_date,
+  intermediate.cand_withdrawn_date,
+  intermediate.compliance_vs_max_template_bill_rate,
+  intermediate.control,
+  intermediate.currency,
+  intermediate.current_date,
+  intermediate.hours_per_day,
+  intermediate.hours_per_week,
+  intermediate.labor_type,
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
+  intermediate.
   CASE 
     WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END) IS NULL THEN intermediate.norm_state_location_level_2
     ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END)
@@ -24,21 +79,6 @@ SELECT DISTINCT
     WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END) IS NULL THEN intermediate.norm_state_location_level_5
     ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END)
   END AS location_level_5,
-  intermediate.title_cleaned,
-  intermediate.ms_category_1,
-  intermediate.ms_category_2,
-  intermediate.onet_career_pathway,
-  intermediate.onet_job_family,
-  intermediate.onet_career_cluster,
-  intermediate.onet_occupation,
-  intermediate.soc_major_group,
-  intermediate.soc_minor_group,
-  intermediate.soc_broad_group,
-  intermediate.onet_detailed_occupation,
-  intermediate.bg_categorization,
-  intermediate.tk_categorization,
-  intermediate.rand_categorization,
-  intermediate.rmi_categorization,
   CASE 
     WHEN TRIM(intermediate.supplier_name_parent_account_id) = '-' THEN CAST(NULL AS STRING)
     ELSE intermediate.supplier_name_parent_account_id
@@ -67,23 +107,7 @@ SELECT DISTINCT
     WHEN intermediate.supp_type_buyer_code IS NOT NULL THEN 'midmarket'
     WHEN REGEXP_CONTAINS(LOWER(intermediate.supplier_name_parent_account_name), r'^randstad') THEN 'OpCo'
     ELSE 'AV'
-  END AS supplier_type,
-  intermediate.account_leader,
-  intermediate.account_name,
-  intermediate.account_svp,
-  intermediate.account_vp,
-  intermediate.ats_provider,
-  intermediate.contract_duration_months,
-  intermediate.contract_end_date,
-  intermediate.contracting_country,
-  intermediate.executive_sponsor,
-  intermediate.go_live_date,
-  intermediate.industry_sector,
-  intermediate.account_industry,
-  intermediate.program_type,
-  intermediate.program_program_name,
-  intermediate.region,
-  intermediate.vms_provider
+  END AS supplier_type
 FROM
-  ${ref("candidate_intermediate_joins")} AS intermediate
+  ${ref("candidate_intermediate1")} AS intermediate
 
