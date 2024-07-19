@@ -1,0 +1,15 @@
+config {
+    type: "operations",
+    name: "spend_intermediate_subquery"
+}
+
+execute immediate 
+format(""" 
+  create or replace table `dataform_cnsd.cnsd_anmz_msp_nam_spend_intermed` as 
+  (With 
+    cte_norm as ( %s )
+  SELECT distinct   cnsd.*
+  FROM
+    cte_norm cnsd
+)
+  """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `db_anmz_nam_spend_stdschema.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%'));

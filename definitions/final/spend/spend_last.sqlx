@@ -1,0 +1,89 @@
+config {
+    type: "table",
+    dependencies: ["spend_intermediate_joins"],
+    schema: "db_anmz_nam_spend_stdschema",
+    name: "cnsd_anmz_msp_nam_spend"
+}
+
+SELECT DISTINCT
+  intermediate.*,
+  intermediate.industry,
+  CASE 
+    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END) IS NULL THEN intermediate.norm_state_location_level_2
+    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END)
+  END AS location_level_2,
+  CASE 
+    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_3 ELSE intermediate.norm_city_non_us_location_level_3 END) IS NULL THEN intermediate.norm_state_location_level_3
+    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_3 ELSE intermediate.norm_city_non_us_location_level_3 END)
+  END AS location_level_3,
+  CASE 
+    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_4 ELSE intermediate.norm_city_non_us_location_level_4 END) IS NULL THEN intermediate.norm_state_location_level_4
+    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_4 ELSE intermediate.norm_city_non_us_location_level_4 END)
+  END AS location_level_4,
+  CASE 
+    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END) IS NULL THEN intermediate.norm_state_location_level_5
+    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END)
+  END AS location_level_5,
+  intermediate.title_cleaned,
+  intermediate.ms_category_1,
+  intermediate.ms_category_2,
+  intermediate.onet_career_pathway,
+  intermediate.onet_job_family,
+  intermediate.onet_career_cluster,
+  intermediate.onet_occupation,
+  intermediate.soc_major_group,
+  intermediate.soc_minor_group,
+  intermediate.soc_broad_group,
+  intermediate.onet_detailed_occupation,
+  intermediate.bg_categorization,
+  intermediate.tk_categorization,
+  intermediate.rand_categorization,
+  intermediate.rmi_categorization,
+  CASE 
+    WHEN TRIM(intermediate.supplier_name_parent_account_id) = '-' THEN CAST(NULL AS STRING)
+    ELSE intermediate.supplier_name_parent_account_id
+  END AS supplier_name_parent_account_id,
+  CASE 
+    WHEN TRIM(intermediate.supplier_name_parent_account_name) = '-' THEN CAST(NULL AS STRING)
+    ELSE intermediate.supplier_name_parent_account_name
+  END AS supplier_name_parent_account_name,
+  CASE 
+    WHEN TRIM(intermediate.supplier_name_randstad_entity_name) = '-' THEN CAST(NULL AS STRING)
+    ELSE intermediate.supplier_name_randstad_entity_name
+  END AS supplier_name_randstad_entity_name,
+  CASE 
+    WHEN TRIM(intermediate.supplier_name_randstad_business_line) = '-' THEN CAST(NULL AS STRING)
+    ELSE intermediate.supplier_name_randstad_business_line
+  END AS supplier_name_randstad_business_line,
+  CASE 
+    WHEN TRIM(intermediate.supplier_name_holding_company) = '-' THEN CAST(NULL AS STRING)
+    ELSE intermediate.supplier_name_holding_company
+  END AS supplier_name_holding_company,
+  CASE 
+    WHEN TRIM(intermediate.supplier_name_supplier_apttus_id) = '-' THEN CAST(NULL AS STRING)
+    ELSE intermediate.supplier_name_supplier_apttus_id
+  END AS supplier_name_supplier_apttus_id,
+  CASE 
+    WHEN intermediate.supp_type_buyer_code IS NOT NULL THEN 'midmarket'
+    WHEN REGEXP_CONTAINS(LOWER(intermediate.supplier_name_parent_account_name), r'^randstad') THEN 'OpCo'
+    ELSE 'AV'
+  END AS supplier_type,
+  intermediate.account_leader,
+  intermediate.account_name,
+  intermediate.account_svp,
+  intermediate.account_vp,
+  intermediate.ats_provider,
+  intermediate.contract_duration_months,
+  intermediate.contract_end_date,
+  intermediate.contracting_country,
+  intermediate.executive_sponsor,
+  intermediate.go_live_date,
+  intermediate.industry_sector,
+  intermediate.account_industry,
+  intermediate.program_type,
+  intermediate.program_program_name,
+  intermediate.region,
+  intermediate.vms_provider
+FROM
+  ${ref("spend_intermediate_joins")} AS intermediate
+

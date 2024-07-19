@@ -1,8 +1,8 @@
 -- definitions/intermediate_joins.sqlx
 config {
   type: "table",
-  name: "intermediate_joins",
-  dependencies: ["intermediate_subquery"]
+  name: "spend_intermediate_joins",
+  dependencies: ["spend_intermediate_subquery"]
 }
 
 SELECT
@@ -60,13 +60,13 @@ SELECT
   prgdtls_trdr.region,
   prgdtls_trdr.vms_provider
 FROM
-  dataform_cnsd.intermediate_subquery cnsd
+  dataform_cnsd.spend_intermediate_subquery cnsd
 LEFT JOIN db_common.global_industry_mapping b ON cnsd.rsr_client_code = b.rsr_client_code 
-LEFT JOIN db_norm_nam.normalization_location_country norm_country ON LOWER(norm_country.input) = LOWER(CASE WHEN cnsd.rsr_country IS NULL THEN cnsd.req_country ELSE cnsd.rsr_country END)
-LEFT JOIN db_norm_nam.normalization_location norm_city_us ON LOWER(norm_city_us.location_raw_input) = CONCAT(LOWER(cnsd.req_city), ', ', LOWER(cnsd.rsr_state)) AND cnsd.req_city IS NOT NULL AND LOWER(norm_city_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) = 'us'
-LEFT JOIN db_norm_nam.normalization_location norm_city_non_us ON LOWER(norm_city_non_us.location_raw_input) = LOWER(cnsd.req_city) AND cnsd.req_city IS NOT NULL AND LOWER(norm_city_non_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) != 'us'
+LEFT JOIN db_norm_nam.normalization_location_country norm_country ON LOWER(norm_country.input) = LOWER(CASE WHEN cnsd.rsr_country IS NULL THEN cnsd.country ELSE cnsd.rsr_country END)
+LEFT JOIN db_norm_nam.normalization_location norm_city_us ON LOWER(norm_city_us.location_raw_input) = CONCAT(LOWER(cnsd.city), ', ', LOWER(cnsd.rsr_state)) AND cnsd.city IS NOT NULL AND LOWER(norm_city_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) = 'us'
+LEFT JOIN db_norm_nam.normalization_location norm_city_non_us ON LOWER(norm_city_non_us.location_raw_input) = LOWER(cnsd.city) AND cnsd.city IS NOT NULL AND LOWER(norm_city_non_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) != 'us'
 LEFT JOIN db_norm_nam.normalization_location norm_state ON LOWER(norm_state.location_raw_input) = LOWER(cnsd.rsr_state) AND cnsd.rsr_state IS NOT NULL AND LOWER(norm_state.location_country_input) = LOWER(norm_country.country_code)
-LEFT JOIN db_norm_nam.normalization_job_title tc ON LOWER(cnsd.req_title) = LOWER(tc.req_title) AND cnsd.rsr_client_code = tc.rsr_client_code
+LEFT JOIN db_norm_nam.normalization_job_title tc ON LOWER(cnsd.main_document_title) = LOWER(tc.req_title) AND cnsd.rsr_client_code = tc.rsr_client_code
 LEFT JOIN db_aptus.msp_slsfrc_nam_aptus_derv_vms_join_unique aptus_data ON LOWER(cnsd.buyer_code) = LOWER(TO_HEX(SHA256(aptus_data.customer_code))) AND LOWER(cnsd.supplier_code) = LOWER(aptus_data.supplier_code)
 LEFT JOIN db_aptus.config_supplier_type_logic supp_type ON LOWER(cnsd.buyer_code) = LOWER(TO_HEX(SHA256(supp_type.buyer_code))) AND LOWER(cnsd.supplier_code) = LOWER(supp_type.supplier_code)
 LEFT JOIN db_gbl_people_analytics_and_performance.misc_slsfrc_gbl_paap_derv_gcp_client_code_dedup prgdtls_trdr ON cnsd.rsr_client_code = prgdtls_trdr.talentradar_gcp_client_code_new

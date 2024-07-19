@@ -1,6 +1,6 @@
 config {
     type: "table",
-    dependencies: ["intermediate_joins"],
+    dependencies: ["candidate_intermediate_joins"],
     schema: "db_anmz_nam_candidate_stdschema",
     name: "cnsd_anmz_msp_nam_candidate"
 }
@@ -85,5 +85,5 @@ SELECT DISTINCT
   intermediate.region,
   intermediate.vms_provider
 FROM
-  ${ref("intermediate_joins")} AS intermediate
+  ${ref("candidate_intermediate_joins")} AS intermediate
 

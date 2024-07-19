@@ -1,6 +1,6 @@
 config {
     type: "operations",
-    name: "intermediate_subquery"
+    name: "candidate_intermediate_subquery"
 }
 
 execute immediate 
