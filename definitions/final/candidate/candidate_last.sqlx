@@ -2,7 +2,7 @@ config {
     type: "table",
     dependencies: ["candidate_intermediate1"],
     schema: "db_anmz_nam_candidate_stdschema",
-    name: "cnsd_anmz_msp_nam_candidate"
+    name: "cnsd_anmz_msp_nam_candidate_deepthi"
 }
 
 SELECT DISTINCT
@@ -39,30 +39,79 @@ SELECT DISTINCT
   intermediate.hours_per_day,
   intermediate.hours_per_week,
   intermediate.labor_type,
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
-  intermediate.
+  intermediate.location,
+  intermediate.max_requested_bill_rate_st_hr,
+  intermediate.max_requested_pay_rate_st_hr,
+  intermediate.max_template_bill_rate_st_hr,
+  intermediate.min_requested_bill_rate_st_hr,
+  intermediate.min_requested_pay_rate_st_hr,
+  intermediate.msp_code,
+  intermediate.msp_company,
+  intermediate.positions_requested_cnt,
+  intermediate.preferred_supplier_status,
+  intermediate.presented_bill_rate_st_hr,
+  intermediate.presented_bill_rate_st_hr_cad,
+  intermediate.presented_bill_rate_st_hr_eur,
+  intermediate.presented_bill_rate_st_hr_gbp,
+  intermediate.presented_bill_rate_st_hr_inr,
+  intermediate.presented_bill_rate_st_hr_usd,
+  intermediate.presented_bill_rate_supplier_st_hr,
+  intermediate.presented_pay_rate_st_hr,
+  intermediate.presented_pay_rate_st_hr_cad,
+  intermediate.presented_pay_rate_st_hr_eur,
+  intermediate.presented_pay_rate_st_hr_gbp,
+  intermediate.presented_pay_rate_st_hr_inr,
+  intermediate.presented_pay_rate_st_hr_usd,
+  intermediate.primary_cost_center,
+  intermediate.rejected_reason,
+  intermediate.req_approved_date,
+  intermediate.req_city,
+  intermediate.req_closed_date,
+  intermediate.req_coordinator_name,
+  intermediate.req_country,
+  intermediate.req_create_date,
+  intermediate.req_currency,
+  intermediate.req_distribution_date,
+  intermediate.req_end_date,
+  intermediate.req_id,
+  intermediate.req_location,
+  intermediate.req_site,
+  intermediate.req_site_code,
+  intermediate.req_state_province,
+  intermediate.req_status,
+  intermediate.req_submitted_date,
+  intermediate.req_title,
+  intermediate.req_type,
+  intermediate.rsr_cand_status,
+  intermediate.rsr_client_code,
+  intermediate.rsr_country,
+  intermediate.rsr_labor_type,
+  intermediate.rsr_processed_date,
+  intermediate.rsr_region,
+  intermediate.rsr_req_status,
+  intermediate.rsr_sourced_type,
+  intermediate.rsr_state,
+  intermediate.rsr_supplier,
+  intermediate.site,
+  intermediate.site_code,
+  intermediate.sourcing_type_wk_mapped,
+  intermediate.sourcing_type_wo_mapped,
+  intermediate.submit_to_shortlist_bd,
+  intermediate.submit_to_shortlist_cd,
+  intermediate.supplier,
+  intermediate.supplier_code,
+  intermediate.supplier_diverse_small,
+  intermediate.supplier_erp_id,
+  intermediate.supplier_presented_bill_rate_st_hr_cad,
+  intermediate.supplier_presented_bill_rate_st_hr_eur,
+  intermediate.supplier_presented_bill_rate_st_hr_gbp,
+  intermediate.supplier_presented_bill_rate_st_hr_inr,
+  intermediate.supplier_presented_bill_rate_st_hr_usd,
+  intermediate.supplier_primary_diversity_type,
+  intermediate.supplier_small_business,
+  intermediate.uploaded,
+  intermediate.withdrawn_reason,
+  intermediate.industry,
   CASE 
     WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END) IS NULL THEN intermediate.norm_state_location_level_2
     ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END)
@@ -79,6 +128,21 @@ SELECT DISTINCT
     WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END) IS NULL THEN intermediate.norm_state_location_level_5
     ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END)
   END AS location_level_5,
+  intermediate.title_cleaned,
+  intermediate.ms_category_1,
+  intermediate.ms_category_2,
+  intermediate.onet_career_pathway,
+  intermediate.onet_job_family,
+  intermediate.onet_career_cluster,
+  intermediate.onet_occupation,
+  intermediate.soc_major_group,
+  intermediate.soc_minor_group,
+  intermediate.soc_broad_group,
+  intermediate.onet_detailed_occupation,
+  intermediate.bg_categorization,
+  intermediate.tk_categorization,
+  intermediate.rand_categorization,
+  intermediate.rmi_categorization,
   CASE 
     WHEN TRIM(intermediate.supplier_name_parent_account_id) = '-' THEN CAST(NULL AS STRING)
     ELSE intermediate.supplier_name_parent_account_id
@@ -107,7 +171,23 @@ SELECT DISTINCT
     WHEN intermediate.supp_type_buyer_code IS NOT NULL THEN 'midmarket'
     WHEN REGEXP_CONTAINS(LOWER(intermediate.supplier_name_parent_account_name), r'^randstad') THEN 'OpCo'
     ELSE 'AV'
-  END AS supplier_type
+  END AS supplier_type,
+  intermediate.account_leader,
+  intermediate.account_name,
+  intermediate.account_svp,
+  intermediate.account_vp,
+  intermediate.ats_provider,
+  intermediate.contract_duration_months,
+  intermediate.contract_end_date,
+  intermediate.contracting_country,
+  intermediate.executive_sponsor,
+  intermediate.go_live_date,
+  intermediate.industry_sector,
+  intermediate.account_industry,
+  intermediate.program_type,
+  intermediate.program_program_name,
+  intermediate.region,
+  intermediate.vms_provider
 FROM
   ${ref("candidate_intermediate1")} AS intermediate
 
