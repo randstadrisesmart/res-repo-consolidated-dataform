@@ -5,7 +5,7 @@ config {
 
 execute immediate 
 format(""" 
-  create or replace table `dataform_cnsd.cnsd_anmz_msp_nam_assignment_intermed` as 
+  create or replace table `dataform_cnsd.assignment_first` as 
   (With 
     cte_norm as ( %s )
   SELECT distinct   cnsd.*

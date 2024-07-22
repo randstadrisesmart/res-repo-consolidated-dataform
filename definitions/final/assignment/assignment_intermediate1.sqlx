@@ -1,7 +1,7 @@
 -- definitions/intermediate_joins.sqlx
 config {
   type: "table",
-  name: "assignment_intermediate_joins",
+  name: "assignment_intermediate1",
   dependencies: ["assignment_intermediate_subquery"]
 }
 
@@ -60,7 +60,7 @@ SELECT
   prgdtls_trdr.region,
   prgdtls_trdr.vms_provider
 FROM
-  dataform_cnsd.assignment_intermediate_subquery cnsd
+  dataform_cnsd.assignment_first cnsd
 LEFT JOIN db_common.global_industry_mapping b ON cnsd.rsr_client_code = b.rsr_client_code 
 LEFT JOIN db_norm_nam.normalization_location_country norm_country ON LOWER(norm_country.input) = LOWER(CASE WHEN cnsd.rsr_country IS NULL THEN cnsd.req_country ELSE cnsd.rsr_country END)
 LEFT JOIN db_norm_nam.normalization_location norm_city_us ON LOWER(norm_city_us.location_raw_input) = CONCAT(LOWER(cnsd.req_city), ', ', LOWER(cnsd.rsr_state)) AND cnsd.req_city IS NOT NULL AND LOWER(norm_city_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) = 'us'
