@@ -1,0 +1,8 @@
+config {
+  type: "table",
+  name: "requisition_distribution_intermediate4",
+  dependencies: ["requisition_distribution_intermediate2"]
+}
+
+SELECT *, ROW_NUMBER() OVER (PARTITION BY buyer_code, req_id, supplier_type ORDER BY buyer_code, req_id, req_distribution_date, supplier) as row_count
+      from dataform_cnsd.requisition_distribution_intermediate2
