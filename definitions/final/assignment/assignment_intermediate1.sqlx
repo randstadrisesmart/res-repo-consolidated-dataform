@@ -62,9 +62,9 @@ SELECT
 FROM
   dataform_cnsd.assignment_first cnsd
 LEFT JOIN db_common.global_industry_mapping b ON cnsd.rsr_client_code = b.rsr_client_code 
-LEFT JOIN db_norm_nam.normalization_location_country norm_country ON LOWER(norm_country.input) = LOWER(CASE WHEN cnsd.rsr_country IS NULL THEN cnsd.req_country ELSE cnsd.rsr_country END)
-LEFT JOIN db_norm_nam.normalization_location norm_city_us ON LOWER(norm_city_us.location_raw_input) = CONCAT(LOWER(cnsd.req_city), ', ', LOWER(cnsd.rsr_state)) AND cnsd.req_city IS NOT NULL AND LOWER(norm_city_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) = 'us'
-LEFT JOIN db_norm_nam.normalization_location norm_city_non_us ON LOWER(norm_city_non_us.location_raw_input) = LOWER(cnsd.req_city) AND cnsd.req_city IS NOT NULL AND LOWER(norm_city_non_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) != 'us'
+LEFT JOIN db_norm_nam.normalization_location_country norm_country ON LOWER(norm_country.input) = LOWER(CASE WHEN cnsd.rsr_country IS NULL THEN cnsd.country ELSE cnsd.rsr_country END)
+LEFT JOIN db_norm_nam.normalization_location norm_city_us ON LOWER(norm_city_us.location_raw_input) = CONCAT(LOWER(cnsd.city), ', ', LOWER(cnsd.rsr_state)) AND cnsd.city IS NOT NULL AND LOWER(norm_city_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) = 'us'
+LEFT JOIN db_norm_nam.normalization_location norm_city_non_us ON LOWER(norm_city_non_us.location_raw_input) = LOWER(cnsd.city) AND cnsd.city IS NOT NULL AND LOWER(norm_city_non_us.location_country_input) = LOWER(norm_country.country_code) AND LOWER(norm_country.country_code) != 'us'
 LEFT JOIN db_norm_nam.normalization_location norm_state ON LOWER(norm_state.location_raw_input) = LOWER(cnsd.rsr_state) AND cnsd.rsr_state IS NOT NULL AND LOWER(norm_state.location_country_input) = LOWER(norm_country.country_code)
 LEFT JOIN db_norm_nam.normalization_job_title tc ON LOWER(cnsd.req_title) = LOWER(tc.req_title) AND cnsd.rsr_client_code = tc.rsr_client_code
 LEFT JOIN db_aptus.msp_slsfrc_nam_aptus_derv_vms_join_unique aptus_data ON LOWER(cnsd.buyer_code) = LOWER(TO_HEX(SHA256(aptus_data.customer_code))) AND LOWER(cnsd.supplier_code) = LOWER(aptus_data.supplier_code)
