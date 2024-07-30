@@ -13,27 +13,3 @@ format("""
     cte_norm cnsd
 )
   """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `db_anmz_nam_assignment_stdschema.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%'));
-Execute
-Execute a subset of actions, or execute every action. Service account data-engineer-service-account@rsr-bi-group-dev-c874.iam.gserviceaccount.com will be used.
-Learn more 
-
-
-
-
-Select actions to execute
-rsr-bi-group-dev-c874.dataform_cnsd.assignment_intermediate_subquery
-Execution options
-
-Include dependencies 
-
-Include dependents 
-
-Run with full refresh 
-1 action selected for execution
-Destination
-Type
-File
-rsr-bi-group-dev-c874.dataform_cnsd.assignment_intermediate_subquery
-Operations	
-definitions/final/assignment/assignment_first.sqlx
-Loading Exe
