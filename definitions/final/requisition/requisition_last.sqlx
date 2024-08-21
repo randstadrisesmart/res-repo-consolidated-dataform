@@ -5,7 +5,10 @@ config {
     name: "cnsd_anmz_msp_nam_requisition_deepthi"
 }
 
-SELECT DISTINCT
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+BEGIN
+EXECUTE IMMEDIATE """SELECT DISTINCT
   intermediate.business_unit,
   intermediate.business_unit_code,
   intermediate.buyer,
@@ -131,5 +134,14 @@ SELECT DISTINCT
   intermediate.region,
   intermediate.vms_provider
 FROM
-  ${ref("requisition_intermediate1")} AS intermediate
-
+  ${ref("requisition_intermediate1")} AS intermediate""";
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_last', 'FAILED', ERROR.message);
+    end;
+ IF success THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_last', 'SUCCESS');
+  END IF;
+  END
