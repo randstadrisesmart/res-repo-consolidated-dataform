@@ -1,7 +1,7 @@
 -- definitions/intermediate_joins.sqlx
 config {
-  type: "table",
-  name: "candidate_intermediate1",
+  type: "operations",
+  name: "candidate_int1",
   dependencies: ["candidate_intermediate_subquery"]
 }
 
@@ -9,7 +9,7 @@ DECLARE success BOOLEAN DEFAULT FALSE;
 BEGIN
 BEGIN
 EXECUTE IMMEDIATE """
-SELECT
+CREATE OR REPLACE TABLE ${ref("candidate_intermediate1")} AS SELECT
   cnsd.*,
   b.industry,
   norm_country.country_code,

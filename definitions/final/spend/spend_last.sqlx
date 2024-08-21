@@ -1,14 +1,12 @@
 config {
-    type: "table",
-    dependencies: ["spend_intermediate1"],
-    schema: "db_anmz_nam_spend_stdschema",
-    name: "cnsd_anmz_msp_nam_spend_deepthi"
+    type: "operations",
+    dependencies: ["spend_int1"]
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
 BEGIN
 BEGIN
-EXECUTE IMMEDIATE """SELECT DISTINCT
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("cnsd_anmz_msp_nam_spend_deepthi")} AS SELECT DISTINCT
   intermediate.assignment_bill_rate_st_hr,
   intermediate.assignment_bill_rate_st_hr_initial,
   intermediate.assignment_id,

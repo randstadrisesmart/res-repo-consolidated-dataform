@@ -1,5 +1,5 @@
 config {
     type: "declaration",
     schema: "dataform_cnsd",
-    name: "cnsd_anmz_msp_nam_assignment_deepthi"
+    name: "cnsd_anmz_msp_nam_candidate_deepthi"
 }
