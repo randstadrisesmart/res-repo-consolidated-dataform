@@ -1,13 +1,13 @@
 config {
-  type: "table",
-  name: "requisition_distribution_intermediate3",
-  dependencies: ["requisition_distribution_intermediate2"]
+  type: "operations",
+  name: "requisition_distribution_int3",
+  dependencies: ["requisition_distribution_int2"]
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
 BEGIN
 BEGIN
-EXECUTE IMMEDIATE """SELECT req_id, buyer_code, STRING_AGG(distinct supplier_type, '/' order by supplier_type) AS supplier_type_combination
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("requisition_distribution_intermediate3")} AS SELECT req_id, buyer_code, STRING_AGG(distinct supplier_type, '/' order by supplier_type) AS supplier_type_combination
     FROM dataform_cnsd.requisition_distribution_intermediate2 t
     GROUP BY req_id, buyer_code""";
 SET success = TRUE;

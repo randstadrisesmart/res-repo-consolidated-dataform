@@ -1,13 +1,13 @@
 config {
-  type: "table",
-  name: "requisition_distribution_intermediate2",
-  dependencies: ["requisition_intermediate_subquery"]
+  type: "operations",
+  name: "requisition_distribution_int2",
+  dependencies: ["requisition_distribution_intermediate_subquery"]
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
 BEGIN
 BEGIN
-EXECUTE IMMEDIATE """SELECT 
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("requisition_distribution_intermediate2")} AS SELECT 
         distinct req_id, cnsd.buyer_code, cnsd.supplier_code, cnsd.req_distribution_date, cnsd.supplier,
         CASE 
           WHEN supp_type.buyer_code is not null then 'midmarket' 

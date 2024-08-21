@@ -1,14 +1,14 @@
 -- definitions/intermediate_joins.sqlx
 config {
-  type: "table",
-  name: "requisition_distribution_intermediate1",
+  type: "operations",
+  name: "requisition_distribution_int1",
   dependencies: ["requisition_distribution_intermediate_subquery"]
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
 BEGIN
 BEGIN
-EXECUTE IMMEDIATE """SELECT
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE  ${ref("requisition_distribution_intermediate1")} AS SELECT
   cnsd.*,
   b.industry,
   norm_country.country_code,

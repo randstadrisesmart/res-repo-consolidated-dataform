@@ -1,14 +1,12 @@
 config {
-    type: "table",
-    dependencies: ["requisition_distribution_intermediate4"],
-    schema: "db_anmz_nam_requisition_distribution_stdschema",
-    name: "cnsd_anmz_msp_nam_requisition_distribution_deepthi"
+    type: "operations",
+    dependencies: ["requisition_distribution_int4","requisition_distribution_int3"]
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
 BEGIN
 BEGIN
-EXECUTE IMMEDIATE """SELECT DISTINCT
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("cnsd_anmz_msp_nam_requisition_distribution_deepthi")} AS SELECT DISTINCT
   intermediate.business_unit,
   intermediate.business_unit_code,
   intermediate.buyer,

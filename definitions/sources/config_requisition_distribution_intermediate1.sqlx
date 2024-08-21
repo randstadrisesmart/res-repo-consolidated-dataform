@@ -1,0 +1,5 @@
+config {
+    type: "declaration",
+    schema: "dataform_cnsd",
+    name: "requisition_distribution_intermediate1",
+}
