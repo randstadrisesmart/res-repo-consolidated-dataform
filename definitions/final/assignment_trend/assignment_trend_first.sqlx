@@ -2,7 +2,9 @@ config {
     type: "operations",
     name: "assignment_trend_intermediate_subquery"
 }
-
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+  BEGIN
 execute immediate 
 format(""" 
   create or replace table `dataform_cnsd.assignment_trend_first` as 
@@ -13,3 +15,14 @@ format("""
     cte_norm cnsd
 )
   """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `db_anmz_nam_assignment_trend_stdschema.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%'));
+
+ SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'assignment_trend_first', 'FAILED', ERROR.message);
+    end;
+ IF success THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
+    VALUES (CURRENT_TIMESTAMP(), 'assignment_trend_first', 'SUCCESS');
+  END IF;
+  END

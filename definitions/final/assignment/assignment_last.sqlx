@@ -5,7 +5,10 @@ config {
     name: "cnsd_anmz_msp_nam_assignment_deepthi"
 }
 
-SELECT DISTINCT
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+    BEGIN
+    EXECUTE IMMEDIATE """SELECT DISTINCT
   intermediate.approve_to_submit_bd,
   intermediate.approve_to_submit_cd,
   intermediate.assignment_activation_date_initial,
@@ -199,5 +202,14 @@ SELECT DISTINCT
   intermediate.region,
   intermediate.vms_provider
 FROM
-  ${ref("assignment_intermediate1")} AS intermediate
-
+  ${ref("assignment_intermediate1")} AS intermediate""";
+    SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'assignment_last', 'FAILED', ERROR.message);
+    end;
+ IF success THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
+    VALUES (CURRENT_TIMESTAMP(), 'assignment_last', 'SUCCESS');
+  END IF;
+  END
