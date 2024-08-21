@@ -1,13 +1,13 @@
 config {
-  type: "table",
-  name: "assignment_intermediate1",
+  type: "operations",
+  name: "assignment_int1",
   dependencies: ["assignment_intermediate_subquery"]
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
 BEGIN
     BEGIN
-    EXECUTE IMMEDIATE """SELECT
+    EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("assignment_intermediate1")} AS SELECT
   cnsd.*,
   b.industry,
   norm_country.country_code,
