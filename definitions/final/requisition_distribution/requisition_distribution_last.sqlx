@@ -5,7 +5,10 @@ config {
     name: "cnsd_anmz_msp_nam_requisition_distribution_deepthi"
 }
 
-SELECT DISTINCT
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+BEGIN
+EXECUTE IMMEDIATE """SELECT DISTINCT
   intermediate.business_unit,
   intermediate.business_unit_code,
   intermediate.buyer,
@@ -153,4 +156,14 @@ FROM
   ${ref("requisition_distribution_intermediate1")} AS intermediate
 LEFT OUTER JOIN ${ref("requisition_distribution_intermediate2")} AS intermediate2 ON intermediate.buyer_code = intermediate2.buyer_code AND intermediate.supplier_code = intermediate2.supplier_code AND intermediate.req_id = intermediate2.req_id
 LEFT OUTER JOIN ${ref("requisition_distribution_intermediate3")} AS intermediate3 ON intermediate.req_id = intermediate3.req_id AND intermediate.buyer_code = intermediate3.buyer_code
-LEFT OUTER JOIN ${ref("requisition_distribution_intermediate4")} AS intermediate4 ON intermediate2.req_id = intermediate4.req_id AND intermediate2.supplier_type = intermediate4.supplier_type AND intermediate.buyer_code = intermediate4.buyer_code AND intermediate2.supplier_code = intermediate4.supplier_code
+LEFT OUTER JOIN ${ref("requisition_distribution_intermediate4")} AS intermediate4 ON intermediate2.req_id = intermediate4.req_id AND intermediate2.supplier_type = intermediate4.supplier_type AND intermediate.buyer_code = intermediate4.buyer_code AND intermediate2.supplier_code = intermediate4.supplier_code""";
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_last', 'FAILED', ERROR.message);
+    end;
+ IF success THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_last', 'SUCCESS');
+  END IF;
+  END

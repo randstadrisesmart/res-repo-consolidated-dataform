@@ -3,7 +3,11 @@ config {
   name: "requisition_distribution_intermediate2",
   dependencies: ["requisition_intermediate_subquery"]
 }
-SELECT 
+
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+BEGIN
+EXECUTE IMMEDIATE """SELECT 
         distinct req_id, cnsd.buyer_code, cnsd.supplier_code, cnsd.req_distribution_date, cnsd.supplier,
         CASE 
           WHEN supp_type.buyer_code is not null then 'midmarket' 
@@ -14,4 +18,14 @@ SELECT
       LEFT JOIN db_aptus.config_supplier_type_logic supp_type ON lower(cnsd.buyer_code) = lower(TO_HEX(SHA256(supp_type.buyer_code))) 
         AND lower(cnsd.supplier_code) = lower(supp_type.supplier_code)
       LEFT JOIN db_aptus.msp_slsfrc_nam_aptus_derv_vms_join_unique aptus_data ON lower(cnsd.buyer_code) = lower(TO_HEX(SHA256(aptus_data.customer_code)))
-        AND lower(cnsd.supplier_code) = lower(aptus_data.supplier_code)
+        AND lower(cnsd.supplier_code) = lower(aptus_data.supplier_code)""";
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate2', 'FAILED', ERROR.message);
+    end;
+ IF success THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate2', 'SUCCESS');
+  END IF;
+  END

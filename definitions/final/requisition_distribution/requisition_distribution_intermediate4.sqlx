@@ -4,5 +4,18 @@ config {
   dependencies: ["requisition_distribution_intermediate2"]
 }
 
-SELECT *, ROW_NUMBER() OVER (PARTITION BY buyer_code, req_id, supplier_type ORDER BY buyer_code, req_id, req_distribution_date, supplier) as row_count
-      from dataform_cnsd.requisition_distribution_intermediate2
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+BEGIN
+EXECUTE IMMEDIATE """SELECT *, ROW_NUMBER() OVER (PARTITION BY buyer_code, req_id, supplier_type ORDER BY buyer_code, req_id, req_distribution_date, supplier) as row_count
+      from dataform_cnsd.requisition_distribution_intermediate2""";
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate4', 'FAILED', ERROR.message);
+    end;
+ IF success THEN
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate4', 'SUCCESS');
+  END IF;
+  END
