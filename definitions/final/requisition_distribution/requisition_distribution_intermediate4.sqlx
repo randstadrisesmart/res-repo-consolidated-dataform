@@ -11,11 +11,11 @@ EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("requisition_distribution_int
       from dataform_cnsd.requisition_distribution_intermediate2""";
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
-    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate4', 'FAILED', ERROR.message);
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate4', 'FAILED', 'dataform-cnsd-nam', 'requisition_distribution_intermediate4 failed to execute');
     end;
  IF success THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
-    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate4', 'SUCCESS');
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate4', 'SUCCESS', 'dataform-cnsd-nam');
   END IF;
   END

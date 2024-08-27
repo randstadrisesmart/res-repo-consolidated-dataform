@@ -115,22 +115,10 @@ EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("cnsd_anmz_msp_nam_spend_deep
   intermediate.usd_fx_rate,
   intermediate.year_calendar,
   intermediate.industry,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END) IS NULL THEN intermediate.norm_state_location_level_2
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END)
-  END AS location_level_2,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_3 ELSE intermediate.norm_city_non_us_location_level_3 END) IS NULL THEN intermediate.norm_state_location_level_3
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_3 ELSE intermediate.norm_city_non_us_location_level_3 END)
-  END AS location_level_3,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_4 ELSE intermediate.norm_city_non_us_location_level_4 END) IS NULL THEN intermediate.norm_state_location_level_4
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_4 ELSE intermediate.norm_city_non_us_location_level_4 END)
-  END AS location_level_4,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END) IS NULL THEN intermediate.norm_state_location_level_5
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END)
-  END AS location_level_5,
+  intermediate.location_level_2,
+  intermediate.location_level_3,
+  intermediate.location_level_4,
+  intermediate.location_level_5,
   intermediate.title_cleaned,
   intermediate.ms_category_1,
   intermediate.ms_category_2,
@@ -146,30 +134,12 @@ EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("cnsd_anmz_msp_nam_spend_deep
   intermediate.tk_categorization,
   intermediate.rand_categorization,
   intermediate.rmi_categorization,
-  CASE 
-    WHEN TRIM(intermediate.supplier_name_parent_account_id) = '-' THEN CAST(NULL AS STRING)
-    ELSE intermediate.supplier_name_parent_account_id
-  END AS supplier_name_parent_account_id,
-  CASE 
-    WHEN TRIM(intermediate.supplier_name_parent_account_name) = '-' THEN CAST(NULL AS STRING)
-    ELSE intermediate.supplier_name_parent_account_name
-  END AS supplier_name_parent_account_name,
-  CASE 
-    WHEN TRIM(intermediate.supplier_name_randstad_entity_name) = '-' THEN CAST(NULL AS STRING)
-    ELSE intermediate.supplier_name_randstad_entity_name
-  END AS supplier_name_randstad_entity_name,
-  CASE 
-    WHEN TRIM(intermediate.supplier_name_randstad_business_line) = '-' THEN CAST(NULL AS STRING)
-    ELSE intermediate.supplier_name_randstad_business_line
-  END AS supplier_name_randstad_business_line,
-  CASE 
-    WHEN TRIM(intermediate.supplier_name_holding_company) = '-' THEN CAST(NULL AS STRING)
-    ELSE intermediate.supplier_name_holding_company
-  END AS supplier_name_holding_company,
-  CASE 
-    WHEN TRIM(intermediate.supplier_name_supplier_apttus_id) = '-' THEN CAST(NULL AS STRING)
-    ELSE intermediate.supplier_name_supplier_apttus_id
-  END AS supplier_name_supplier_apttus_id,
+  intermediate.supplier_name_parent_account_id,
+  intermediate.supplier_name_parent_account_name,
+  intermediate.supplier_name_randstad_entity_name,
+  intermediate.supplier_name_randstad_business_line,
+  intermediate.supplier_name_holding_company,
+  intermediate.supplier_name_supplier_apttus_id,
   CASE 
     WHEN intermediate.supp_type_buyer_code IS NOT NULL THEN 'midmarket'
     WHEN REGEXP_CONTAINS(LOWER(intermediate.supplier_name_parent_account_name), r'^randstad') THEN 'OpCo'
@@ -195,11 +165,11 @@ FROM
   ${ref("spend_intermediate1")} AS intermediate""";
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
-    VALUES (CURRENT_TIMESTAMP(), 'spend_last', 'FAILED', ERROR.message);
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'spend_last', 'FAILED', 'dataform-cnsd-nam', 'spend_last failed to execute');
     end;
  IF success THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
-    VALUES (CURRENT_TIMESTAMP(), 'spend_last', 'SUCCESS');
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name)
+    VALUES (CURRENT_TIMESTAMP(), 'spend_last', 'SUCCESS', 'dataform-cnsd-nam');
   END IF;
   END

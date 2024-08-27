@@ -84,22 +84,10 @@ EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${ref("cnsd_anmz_msp_nam_requisitio
   intermediate.withdraw_reason,
   intermediate.zip_postal_code,
   intermediate.industry,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END) IS NULL THEN intermediate.norm_state_location_level_2
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_2 ELSE intermediate.norm_city_non_us_location_level_2 END)
-  END AS location_level_2,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_3 ELSE intermediate.norm_city_non_us_location_level_3 END) IS NULL THEN intermediate.norm_state_location_level_3
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_3 ELSE intermediate.norm_city_non_us_location_level_3 END)
-  END AS location_level_3,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_4 ELSE intermediate.norm_city_non_us_location_level_4 END) IS NULL THEN intermediate.norm_state_location_level_4
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_4 ELSE intermediate.norm_city_non_us_location_level_4 END)
-  END AS location_level_4,
-  CASE 
-    WHEN (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END) IS NULL THEN intermediate.norm_state_location_level_5
-    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN intermediate.norm_city_us_location_level_5 ELSE intermediate.norm_city_non_us_location_level_5 END)
-  END AS location_level_5,
+  intermediate.location_level_2,
+  intermediate.location_level_3,
+  intermediate.location_level_4,
+  intermediate.location_level_5,
   intermediate.title_cleaned,
   intermediate.ms_category_1,
   intermediate.ms_category_2,
@@ -135,11 +123,11 @@ FROM
   ${ref("requisition_intermediate1")} AS intermediate""";
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
-    VALUES (CURRENT_TIMESTAMP(), 'requisition_last', 'FAILED', ERROR.message);
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_last', 'FAILED', 'dataform-cnsd-nam',  'requisition_last failed to execute');
     end;
  IF success THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
-    VALUES (CURRENT_TIMESTAMP(), 'requisition_last', 'SUCCESS');
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_last', 'SUCCESS', 'dataform-cnsd-nam');
   END IF;
   END

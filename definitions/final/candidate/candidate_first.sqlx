@@ -17,11 +17,11 @@ format("""
   """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `db_anmz_nam_candidate_stdschema.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%'));
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
-    VALUES (CURRENT_TIMESTAMP(), 'candidate_first', 'FAILED', ERROR.message);
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'candidate_first', 'FAILED', 'dataform-cnsd-nam', 'candidate_first failed to execute');
     end;
  IF success THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
-    VALUES (CURRENT_TIMESTAMP(), 'candidate_first', 'SUCCESS');
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name)
+    VALUES (CURRENT_TIMESTAMP(), 'candidate_first', 'SUCCESS', 'dataform-cnsd-nam');
   END IF;
   END

@@ -39,12 +39,6 @@ EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE  ${ref("requisition_distribution_in
   tc.tk_categorization,
   tc.rand_categorization,
   tc.rmi_categorization,
-  aptus_data.supplier_name_parent_account_id,
-  aptus_data.supplier_name_parent_account_name,
-  aptus_data.supplier_name_randstad_entity_name,
-  aptus_data.supplier_name_randstad_business_line,
-  aptus_data.supplier_name_holding_company,
-  aptus_data.supplier_name_supplier_apttus_id,
   prgdtls_trdr.account_leader,
   prgdtls_trdr.account_name,
   prgdtls_trdr.account_svp,
@@ -60,7 +54,47 @@ EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE  ${ref("requisition_distribution_in
   prgdtls_trdr.program_type,
   prgdtls_trdr.program_program_name,
   prgdtls_trdr.region,
-  prgdtls_trdr.vms_provider
+  prgdtls_trdr.vms_provider,
+  CASE 
+    WHEN (CASE WHEN LOWER(norm_country.country_code) = 'us' THEN norm_city_us.location_level_2 ELSE norm_city_non_us.location_level_2 END) IS NULL THEN norm_state.location_level_2
+    ELSE (CASE WHEN LOWER(norm_country.country_code) = 'us' THEN norm_city_us.location_level_2 ELSE norm_city_non_us.location_level_2 END)
+  END AS location_level_2,
+  CASE 
+    WHEN (CASE WHEN LOWER(norm_country.country_code) = 'us' THEN norm_city_us.location_level_3 ELSE norm_city_non_us.location_level_3 END) IS NULL THEN norm_state.location_level_3
+    ELSE (CASE WHEN LOWER(norm_country.country_code) = 'us' THEN intermediate.location_level_3 ELSE norm_city_non_us.location_level_3 END)
+  END AS location_level_3,
+  CASE 
+    WHEN (CASE WHEN LOWER(norm_country.country_code) = 'us' THEN norm_city_us.location_level_4 ELSE norm_city_non_us.location_level_4 END) IS NULL THEN norm_state.location_level_4
+    ELSE (CASE WHEN LOWER(norm_country.country_code) = 'us' THEN norm_city_us.location_level_4 ELSE norm_city_non_us.location_level_4 END)
+  END AS location_level_4,
+  CASE 
+    WHEN (CASE WHEN LOWER(norm_country.country_code) = 'us' THEN norm_city_us.location_level_5 ELSE norm_city_non_us.location_level_5 END) IS NULL THEN norm_state.location_level_5
+    ELSE (CASE WHEN LOWER(intermediate.country_code) = 'us' THEN norm_city_us.location_level_5 ELSE norm_city_non_us.location_level_5 END)
+  END AS location_level_5,
+  CASE 
+    WHEN TRIM(aptus_data.supplier_name_parent_account_id) = '-' THEN CAST(NULL AS STRING)
+    ELSE aptus_data.supplier_name_parent_account_id
+  END AS supplier_name_parent_account_id,
+  CASE 
+    WHEN TRIM(aptus_data.supplier_name_parent_account_name) = '-' THEN CAST(NULL AS STRING)
+    ELSE aptus_data.supplier_name_parent_account_name
+  END AS supplier_name_parent_account_name,
+  CASE 
+    WHEN TRIM(aptus_data.supplier_name_randstad_entity_name) = '-' THEN CAST(NULL AS STRING)
+    ELSE aptus_data.supplier_name_randstad_entity_name
+  END AS supplier_name_randstad_entity_name,
+  CASE 
+    WHEN TRIM(aptus_data.supplier_name_randstad_business_line) = '-' THEN CAST(NULL AS STRING)
+    ELSE aptus_data.supplier_name_randstad_business_line
+  END AS supplier_name_randstad_business_line,
+  CASE 
+    WHEN TRIM(aptus_data.supplier_name_holding_company) = '-' THEN CAST(NULL AS STRING)
+    ELSE aptus_data.supplier_name_holding_company
+  END AS supplier_name_holding_company,
+  CASE 
+    WHEN TRIM(aptus_data.supplier_name_supplier_apttus_id) = '-' THEN CAST(NULL AS STRING)
+    ELSE aptus_data.supplier_name_supplier_apttus_id
+  END AS supplier_name_supplier_apttus_id
 FROM
   dataform_cnsd.requisition_distribution_first cnsd
 LEFT JOIN db_common.global_industry_mapping b ON cnsd.rsr_client_code = b.rsr_client_code 
@@ -73,11 +107,11 @@ LEFT JOIN db_aptus.msp_slsfrc_nam_aptus_derv_vms_join_unique aptus_data ON (LOWE
 LEFT JOIN db_gbl_people_analytics_and_performance.misc_slsfrc_gbl_paap_derv_gcp_client_code_dedup prgdtls_trdr ON cnsd.rsr_client_code = prgdtls_trdr.talentradar_gcp_client_code_new""";
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, error_message)
-    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate1', 'FAILED', ERROR.message);
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate1', 'FAILED', 'dataform-cnsd-nam', 'requisition_distribution_intermediate1 failed to execute');
     end;
  IF success THEN
-    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status)
-    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate1', 'SUCCESS');
+    INSERT INTO dataform_cnsd.execution_logs (execution_time, query_name, status, dataform_name)
+    VALUES (CURRENT_TIMESTAMP(), 'requisition_distribution_intermediate1', 'SUCCESS', 'dataform-cnsd-nam');
   END IF;
   END
