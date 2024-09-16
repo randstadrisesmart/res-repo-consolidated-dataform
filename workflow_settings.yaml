@@ -1,5 +1,6 @@
 defaultProject: rsr-bi-group-dev-c874
 defaultLocation: us-east1
-defaultDataset: dataform_cnsd
 defaultAssertionDataset: dataform_assertions
 dataformCoreVersion: 3.0.0-beta.4
+defaultDataset: delete_db_cnsd_test
+
