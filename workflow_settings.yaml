@@ -1,0 +1,5 @@
+defaultProject: rsr-bi-group-prd-701e
+defaultLocation: EU
+defaultDataset: dataform
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.0
