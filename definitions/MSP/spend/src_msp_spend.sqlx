@@ -1,0 +1,30 @@
+config {
+    type: "operations",
+    description: "Union of all anmz tables"
+}
+
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+    BEGIN
+execute immediate 
+format(""" 
+  create or replace table ${declarations.src_spend_tbl_name()} as 
+  (With 
+    cte_norm as ( %s )
+  SELECT cnsd.*
+  FROM
+    cte_norm cnsd
+)
+  """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `${declarations.anmz_spend_dataset_name()}.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%'));
+
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'src_msp_spend.sqlx', 'FAILED', 'dataform_test_template_sb', ${declarations.var_dataform_region()} , 'query failed to execute');
+    end;
+ IF success THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region)
+    VALUES (CURRENT_TIMESTAMP(), 'src_msp_spend.sqlx', 'SUCCESS', 'dataform_test_template_sb', ${declarations.var_dataform_region()});
+  END IF;
+  END
+

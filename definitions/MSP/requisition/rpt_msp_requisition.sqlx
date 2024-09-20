@@ -1,0 +1,25 @@
+config {
+    type: "operations",
+    dependencies: ["intrmed_msp_requisition"]
+}
+
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+    BEGIN
+
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${declarations.rpt_req_tbl_name()} AS 
+SELECT DISTINCT intermediate.* 
+FROM ${declarations.intrmed_req_tbl_name()} AS intermediate""";
+
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_requisition.sqlx', 'FAILED', 'dataform_test_template_sb', ${declarations.var_dataform_region()} , 'query failed to execute');
+    end;
+ IF success THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region)
+    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_requisition.sqlx', 'SUCCESS', 'dataform_test_template_sb', ${declarations.var_dataform_region()});
+  END IF;
+  END
+
+

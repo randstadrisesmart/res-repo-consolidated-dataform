@@ -1,0 +1,31 @@
+config {
+    type: "operations",
+    dependencies: ["intrmed_msp_assignment"]
+}
+
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+    BEGIN
+
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${declarations.rpt_asgm_tbl_name()} AS 
+SELECT DISTINCT
+  intermediate.* EXCEPT(supp_type_buyer_code),
+  CASE 
+    WHEN intermediate.supp_type_buyer_code IS NOT NULL THEN 'midmarket'
+    WHEN REGEXP_CONTAINS(LOWER(intermediate.supplier_name_parent_account_name), r'^randstad') THEN 'OpCo'
+    ELSE 'AV'
+  END AS supplier_type
+FROM ${declarations.intrmed_asgm_tbl_name()} AS intermediate""";
+
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_assignment.sqlx', 'FAILED', 'dataform_test_template_sb', ${declarations.var_dataform_region()} , 'query failed to execute');
+    end;
+ IF success THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region)
+    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_assignment.sqlx', 'SUCCESS', 'dataform_test_template_sb', ${declarations.var_dataform_region()});
+  END IF;
+  END
+
+

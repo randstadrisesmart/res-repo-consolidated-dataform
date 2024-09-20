@@ -1,0 +1,43 @@
+config {
+    type: "operations",
+    dependencies: ["intrmed_1_msp_req_distribution", "intrmed_3_msp_req_distribution", "intrmed_4_msp_req_distribution", "intrmed_2_msp_req_distribution"]
+}
+
+DECLARE success BOOLEAN DEFAULT FALSE;
+BEGIN
+    BEGIN
+
+EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${declarations.rpt_req_distribution_tbl_name()} AS 
+SELECT DISTINCT intrmed_1.* EXCEPT(supp_type_buyer_code), 
+intrmed_2.supplier_type,
+intrmed_3.supplier_type_combination,
+CASE
+    WHEN intrmed_4.row_count = 1 THEN CAST(intrmed_1.positions_requested_cnt AS INT)
+    ELSE CAST(0 AS INT) 
+END AS supplier_type_positions_requested_cnt
+
+FROM ${declarations.intrmed_1_req_distribution_tbl_name()} AS intrmed_1
+LEFT JOIN ${declarations.intrmed_2_req_distribution_tbl_name()} AS intrmed_2 ON
+    intrmed_2.req_id = intrmed_1.req_id AND 
+    intrmed_2.buyer_code = intrmed_1.buyer_code AND
+    intrmed_2.supplier_code = intrmed_1.supplier_code  
+LEFT JOIN ${declarations.intrmed_3_req_distribution_tbl_name()} AS intrmed_3 ON
+    intrmed_3.req_id = intrmed_1.req_id AND 
+    intrmed_3.buyer_code = intrmed_1.buyer_code   
+LEFT JOIN ${declarations.intrmed_4_req_distribution_tbl_name()} AS intrmed_4 ON
+    intrmed_4.req_id = intrmed_2.req_id AND 
+    intrmed_4.supplier_type = intrmed_2.supplier_type AND
+    intrmed_4.buyer_code = intrmed_1.buyer_code AND
+    intrmed_4.supplier_code = intrmed_2.supplier_code
+""";
+
+SET success = TRUE;
+EXCEPTION WHEN ERROR THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region, error_message)
+    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_req_distribution.sqlx', 'FAILED', 'dataform_test_template_sb', ${declarations.var_dataform_region()} , 'query failed to execute');
+    end;
+ IF success THEN
+    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region)
+    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_req_distribution.sqlx', 'SUCCESS', 'dataform_test_template_sb', ${declarations.var_dataform_region()});
+  END IF;
+  END

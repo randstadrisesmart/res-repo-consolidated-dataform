@@ -1,5 +1,5 @@
 defaultProject: rsr-bi-group-prd-701e
-defaultLocation: EU
-defaultDataset: dataform
+defaultLocation: europe-west1
+defaultDataset: db_emea_blue_cnsd
 defaultAssertionDataset: dataform_assertions
 dataformCoreVersion: 3.0.0
