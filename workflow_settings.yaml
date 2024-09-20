@@ -1,5 +1,5 @@
 defaultProject: rsr-bi-group-prd-701e
-defaultLocation: US
-defaultDataset: dataform
+defaultLocation: us-east1
+defaultDataset: db_nam_blue_cnsd
 defaultAssertionDataset: dataform_assertions
 dataformCoreVersion: 3.0.0
