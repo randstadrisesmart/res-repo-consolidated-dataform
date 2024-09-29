@@ -1,6 +1,7 @@
 config {
     type: "operations",
-    description: "Union of all anmz tables"
+    description: "Union of all anmz tables",
+    tags: "MSP"
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
@@ -19,12 +20,12 @@ format("""
 
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region, error_message)
-    VALUES (CURRENT_TIMESTAMP(), 'src_msp_assignment.sqlx', 'FAILED', 'dataform_test_template_sb', ${declarations.var_dataform_region()} , 'query failed to execute');
+    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region, error_message)
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(), 'src_msp_assignment.sqlx', 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , 'query failed to execute');
     end;
  IF success THEN
-    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region)
-    VALUES (CURRENT_TIMESTAMP(), 'src_msp_assignment.sqlx', 'SUCCESS', 'dataform_test_template_sb', ${declarations.var_dataform_region()});
+    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region)
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'src_msp_assignment.sqlx', 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
   END IF;
   END
 

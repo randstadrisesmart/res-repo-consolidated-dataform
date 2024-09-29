@@ -1,3 +1,7 @@
+
+const starttime = `CURRENT_TIMESTAMP()`;
+const dfm_name = "'dataform-blue-cnsd-nam'";
+
 // Assignment tables
 
 function anmz_asgm_dataset_name() {
@@ -342,6 +346,8 @@ function lkp_misc_slsfrc_gbl_paap_derv_gcp_client_code_dedup() {
 
 
 module.exports = {
+    starttime,
+    dfm_name,
     anmz_asgm_dataset_name,
     anmz_asgm_trend_dataset_name,
     anmz_requisition_dataset_name,

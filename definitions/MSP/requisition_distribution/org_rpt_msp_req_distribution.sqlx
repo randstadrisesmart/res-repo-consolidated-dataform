@@ -33,11 +33,11 @@ LEFT JOIN ${declarations.intrmed_4_req_distribution_tbl_name()} AS intrmed_4 ON
 
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region, error_message)
-    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_req_distribution.sqlx', 'FAILED', 'dataform_test_template_sb', ${declarations.var_dataform_region()} , 'query failed to execute');
+    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region, error_message)
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'rpt_msp_req_distribution.sqlx', 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , 'query failed to execute');
     end;
  IF success THEN
-    INSERT INTO ${declarations.tbl_execution_log()} (execution_time, query_name, status, dataform_name, dataform_region)
-    VALUES (CURRENT_TIMESTAMP(), 'rpt_msp_req_distribution.sqlx', 'SUCCESS', 'dataform_test_template_sb', ${declarations.var_dataform_region()});
+    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region)
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'rpt_msp_req_distribution.sqlx', 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
   END IF;
   END

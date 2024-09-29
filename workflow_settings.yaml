@@ -1,5 +1,8 @@
 defaultProject: rsr-bi-group-prd-701e
-defaultLocation: europe-west1
-defaultDataset: db_emea_blue_cnsd
+defaultLocation: us-east1
+defaultDataset: db_nam_blue_cnsd
 defaultAssertionDataset: dataform_assertions
 dataformCoreVersion: 3.0.0
+# vars:
+#     dfm_run_datetime: "`r format(Sys.time(), '%d %B, %Y')`"
+#     dfm_name: "'dataform-blue-cnsd-nam'"
