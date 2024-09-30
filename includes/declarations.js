@@ -1,6 +1,6 @@
 
 const starttime = `CURRENT_TIMESTAMP()`;
-const dfm_name = "'dataform-blue-cnsd-nam'";
+const dfm_name = "'dataform-blue-cnsd-emea'"; // update this when pull updated code from another region form
 
 // Assignment tables
 
