@@ -1,7 +1,7 @@
 config {
     type: "operations",
     dependencies: ["intrmed_1_msp_req_distribution"],
-    description: "logic to identifyd supplier_type column",
+    description: "logic to identify supplier_type",
     tags: "MSP"
 }
 

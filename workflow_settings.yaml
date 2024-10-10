@@ -1,6 +1,6 @@
 defaultProject: rsr-bi-group-prd-701e
-defaultLocation: europe-west1 # update this when pull updated code from another region form
-defaultDataset: db_emea_blue_cnsd # update this when pull updated code from another region form
+defaultLocation: us-east1 # update this when pull updated code from another region form
+defaultDataset: db_nam_blue_cnsd # update this when pull updated code from another region form
 defaultAssertionDataset: dataform_assertions
 dataformCoreVersion: 3.0.0
 # vars:
