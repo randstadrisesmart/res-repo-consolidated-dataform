@@ -12,11 +12,11 @@ format("""
   create or replace table ${declarations.src_asgm_tbl_name()} as 
   (With 
     cte_norm as ( %s )
-  SELECT cnsd.*,
+  SELECT cnsd.*
   FROM
     cte_norm cnsd
 )
-  """,(select string_agg( concat("select * from ", table_schema,"." ,table_name), " union all\n") from `${declarations.anmz_asgm_dataset_name()}.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%'));
+  """,(select string_agg( concat("select *,top from ", table_schema,"." ,table_name), " union all\n") from `${declarations.anmz_asgm_dataset_name()}.INFORMATION_SCHEMA.TABLES` where table_type like '%VIEW' and table_name like 'anmz%_msp_%'));
 
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
