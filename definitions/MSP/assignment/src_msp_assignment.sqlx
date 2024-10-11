@@ -12,7 +12,7 @@ format("""
   create or replace table ${declarations.src_asgm_tbl_name()} as 
   (With 
     cte_norm as ( %s )
-  SELECT cnsd.*
+  SELECT cnsd.*,
   FROM
     cte_norm cnsd
 )
