@@ -2,7 +2,7 @@
 var date = new Date();
 var current_date = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+ date.getDate();
 var current_time = date.getHours()+":"+date.getMinutes()+":"+ date.getSeconds();
-const starttime = "'" + current_date + " " + current_time + "'";
+var starttime = "'" + current_date + " " + current_time + "'";
 //const starttime = `CURRENT_TIMESTAMP()`;
 const dfm_name = "'dataform-blue-cnsd-nam'"; // update this when pull updated code from another region form
 
