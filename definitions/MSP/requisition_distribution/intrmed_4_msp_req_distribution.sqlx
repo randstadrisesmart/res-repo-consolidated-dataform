@@ -6,6 +6,9 @@ config {
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
+DECLARE query_name STRING;
+SET query_name = 'intrmed_4_msp_req_distribution.sqlx';
+
 BEGIN
     BEGIN
 
@@ -16,11 +19,17 @@ FROM ${declarations.intrmed_2_req_distribution_tbl_name()} AS intermediate
 
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
+  BEGIN
+      DECLARE errmessage STRING;
+      SET errmessage = @@error.message;
+
     INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region, error_message)
-    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'intrmed_4_msp_req_distribution.sqlx', 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , 'query failed to execute');
-    end;
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), query_name, 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , errmessage);
+    END;
+    END;
  IF success THEN
     INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region)
-    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'intrmed_4_msp_req_distribution.sqlx', 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), query_name, 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
   END IF;
   END
+  

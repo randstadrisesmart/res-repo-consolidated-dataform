@@ -5,6 +5,9 @@ config {
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
+DECLARE query_name STRING;
+SET query_name = 'src_msp_assignment.sqlx';
+
 BEGIN
     BEGIN
 execute immediate 
@@ -20,12 +23,19 @@ format("""
 
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
+  BEGIN
+      
+      DECLARE errmessage STRING;
+      SET errmessage = @@error.message;
+    --   select concat(@@error.message );  -- this is to print the error in the stdout
+    --   select concat(@@error.statement_text );  -- this is to print the sql statement where error occured in the stdout
+
     INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region, error_message)
-    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP(), 'src_msp_assignment.sqlx', 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , 'query failed to execute');
-    end;
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), query_name, 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , errmessage);
+    END;
+    END;
  IF success THEN
     INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region)
-    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'src_msp_assignment.sqlx', 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), query_name, 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
   END IF;
   END
-

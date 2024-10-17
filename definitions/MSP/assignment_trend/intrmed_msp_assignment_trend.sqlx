@@ -6,6 +6,9 @@ config {
 }
 
 DECLARE success BOOLEAN DEFAULT FALSE;
+DECLARE query_name STRING;
+SET query_name = 'intrmed_msp_assignment_trend.sqlx';
+
 BEGIN
     BEGIN
 
@@ -78,7 +81,10 @@ EXECUTE IMMEDIATE """CREATE OR REPLACE TABLE ${declarations.intrmed_asgm_trend_t
       prgdtls_trdr.program_program_name,
       prgdtls_trdr.region,
       prgdtls_trdr.vms_provider,
-      supp_type.buyer_code AS supp_type_buyer_code
+      prgdtls_trdr.talentradar_poc,
+      supp_type.buyer_code AS supp_type_buyer_code,
+      CONCAT(cnsd.rsr_client_code,cnsd.assignment_id) AS assignment_unique_key,
+      CONCAT(cnsd.rsr_client_code,cnsd.req_id) AS req_unique_key
 FROM ${declarations.src_asgm_trend_tbl_name()} cnsd
 left join ${declarations.lkp_global_industry_mapping()} b on cnsd.rsr_client_code = b.rsr_client_code 
   LEFT OUTER JOIN ${declarations.lkp_normalization_location_country()} norm_country
@@ -110,12 +116,16 @@ left outer join ${declarations.lkp_misc_slsfrc_gbl_paap_derv_gcp_client_code_ded
 
 SET success = TRUE;
 EXCEPTION WHEN ERROR THEN
-    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time, execution_time, query_name, status, dataform_name, dataform_region, error_message)
-    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'intrmed_msp_assignment_trend.sqlx', 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , 'query failed to execute');
-    end;
+  BEGIN
+      DECLARE errmessage STRING;
+      SET errmessage = @@error.message;
+
+    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region, error_message)
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), query_name, 'FAILED', ${declarations.dfm_name}, ${declarations.var_dataform_region()} , errmessage);
+    END;
+    END;
  IF success THEN
-    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time, execution_time, query_name, status, dataform_name, dataform_region)
-    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), 'intrmed_msp_assignment_trend.sqlx', 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
+    INSERT INTO ${declarations.tbl_execution_log()} (dfm_execution_time,execution_time, query_name, status, dataform_name, dataform_region)
+    VALUES (${declarations.starttime},CURRENT_TIMESTAMP(), query_name, 'SUCCESS', ${declarations.dfm_name}, ${declarations.var_dataform_region()});
   END IF;
   END
-
